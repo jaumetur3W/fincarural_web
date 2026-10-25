@@ -319,11 +319,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                    <label htmlFor="startDate" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                       {data.type === 'estada' ? 'Data d’arribada estimada' : 'Data de la celebració'} *
                     </label>
                     <div className="relative">
                       <input
+                        id="startDate"
                         type="date"
                         min={todayStr}
                         value={data.startDate}
@@ -340,10 +341,11 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                   {data.type === 'estada' ? (
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                      <label htmlFor="endDate" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                         Data de sortida estimada *
                       </label>
                       <input
+                        id="endDate"
                         type="date"
                         min={data.startDate || todayStr}
                         value={data.endDate}
@@ -358,10 +360,11 @@ export const MultiStepInquiryForm: React.FC = () => {
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                      <label htmlFor="eventTime" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                         Horari aproximat
                       </label>
                       <select
+                        id="eventTime"
                         className="w-full bg-[#F5F2EA] border border-[#DDD4C5] p-3 text-sm text-[#343D2D] focus:border-[#343D2D] focus:outline-none"
                         value={data.eventTime}
                         onChange={(e) => updateField('eventTime', e.target.value)}
@@ -375,10 +378,11 @@ export const MultiStepInquiryForm: React.FC = () => {
                 </div>
 
                 <div className="pt-2">
-                  <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                  <label htmlFor="guestsCount" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                     Nombre aproximat d’assistents o hostes: <span className="font-bold text-[#B56F50]">{data.guestsCount}</span>
                   </label>
                   <input
+                    id="guestsCount"
                     type="range"
                     min="2"
                     max={data.type === 'estada' ? 16 : 65}
@@ -496,10 +500,11 @@ export const MultiStepInquiryForm: React.FC = () => {
                 )}
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                  <label htmlFor="cateringNeeded" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                     Previsió gastronòmica
                   </label>
                   <select
+                    id="cateringNeeded"
                     value={data.cateringNeeded}
                     onChange={(e) => updateField('cateringNeeded', e.target.value)}
                     className="w-full bg-[#F5F2EA] border border-[#DDD4C5] p-3 text-sm text-[#343D2D]"
@@ -511,10 +516,11 @@ export const MultiStepInquiryForm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                  <label htmlFor="specialRequests" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                     Observacions o requisits particulars
                   </label>
                   <textarea
+                    id="specialRequests"
                     rows={3}
                     value={data.specialRequests}
                     onChange={(e) => updateField('specialRequests', e.target.value)}
@@ -539,10 +545,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                    <label htmlFor="fullName" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                       Nom complet *
                     </label>
                     <input
+                      id="fullName"
+                      autoComplete="name"
                       type="text"
                       value={data.fullName}
                       onChange={(e) => updateField('fullName', e.target.value)}
@@ -557,10 +565,12 @@ export const MultiStepInquiryForm: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                    <label htmlFor="email" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                       Correu electrònic *
                     </label>
                     <input
+                      id="email"
+                      autoComplete="email"
                       type="email"
                       value={data.email}
                       onChange={(e) => updateField('email', e.target.value)}
@@ -577,10 +587,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                    <label htmlFor="phone" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                       Telèfon de contacte (opcional)
                     </label>
                     <input
+                      id="phone"
+                      autoComplete="tel"
                       type="tel"
                       value={data.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
@@ -591,10 +603,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                   {data.type === 'empresa' && (
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                      <label htmlFor="companyName" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                         Empresa o Organització
                       </label>
                       <input
+                        id="companyName"
+                        autoComplete="organization"
                         type="text"
                         value={data.companyName}
                         onChange={(e) => updateField('companyName', e.target.value)}
