@@ -52,7 +52,14 @@ const initialFormData: InquiryFormData = {
   privacyAccepted: false,
 };
 
-const getTodayIso = () => new Date().toISOString().split('T')[0];
+const getTodayIso = () => {
+  // Build the date in local time; toISOString() uses UTC and can be a day behind near midnight.
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export const MultiStepInquiryForm: React.FC = () => {
   const [todayStr] = useState<string>(getTodayIso);
@@ -86,10 +93,8 @@ export const MultiStepInquiryForm: React.FC = () => {
       if (!data.startDate) {
         errs.startDate = 'Indica la data d’arribada o esdeveniment.';
       } else {
-        const selected = new Date(data.startDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        if (selected < today) {
+        // ISO date strings (YYYY-MM-DD) compare chronologically without timezone conversion.
+        if (data.startDate < todayStr) {
           errs.startDate = 'La data no pot ser en el passat.';
         }
       }
@@ -97,15 +102,15 @@ export const MultiStepInquiryForm: React.FC = () => {
       if (data.type === 'estada') {
         if (!data.endDate) {
           errs.endDate = 'Indica la data de sortida estimada.';
-        } else if (data.startDate && new Date(data.endDate) <= new Date(data.startDate)) {
+        } else if (data.startDate && data.endDate <= data.startDate) {
           errs.endDate = 'La sortida ha de ser posterior a l’arribada.';
         }
       }
 
       if (!data.guestsCount || data.guestsCount < 1) {
         errs.guestsCount = 'Indica com a mínim 1 persona.';
-      } else if (data.guestsCount > 80) {
-        errs.guestsCount = 'La capacitat màxima de la finca és de 65 persones per esdeveniment.';
+      } else if (data.guestsCount > 65) {
+        errs.guestsCount = 'La capacitat màxima de la demo és de 65 persones per esdeveniment.';
       }
     }
 
