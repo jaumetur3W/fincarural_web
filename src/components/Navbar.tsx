@@ -24,7 +24,7 @@ export const Navbar: React.FC = () => {
     { name: 'La Finca', path: '/la-finca' },
     { name: 'Estades', path: '/estades' },
     { name: 'Celebracions', path: '/celebracions' },
-    { name: 'Encuentres', path: '/encuentres' },
+    { name: 'Trobades d’empresa', path: '/encuentres' },
     { name: 'Info & FAQ', path: '/faq' },
   ];
 
