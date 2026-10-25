@@ -6,7 +6,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 
 export const CorporatePage: React.FC = () => {
   usePageMeta({
-    title: 'Encuentres de Empresa & Retirs',
+    title: 'Trobades d’empresa i retirs',
     description: 'Espai inspirador per a comitès estratègics, tallers d’innovació i retirs d’equip en un paratge protegit.',
   });
   return (
@@ -18,7 +18,7 @@ export const CorporatePage: React.FC = () => {
             B2B & Retirs Professionals
           </span>
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-[#343D2D] mt-2 font-normal">
-            Encuentres de Empresa.
+            Trobades d’empresa.
           </h1>
           <p className="text-base text-[#51483D] leading-relaxed font-light mt-4">
             Un entorn serè dissenyat per a equips que necessiten pensar sense interferències.
