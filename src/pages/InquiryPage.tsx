@@ -2,8 +2,13 @@ import React from 'react';
 import { MultiStepInquiryForm } from '../components/MultiStepInquiryForm';
 import { FINCA_INFO } from '../data/content';
 import { Mail, Clock, ShieldCheck } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const InquiryPage: React.FC = () => {
+  usePageMeta({
+    title: 'Sol·licitar Disponibilitat & Pressupost',
+    description: 'Consulta de disponibilitat en 5 passos per a estades exclusives, celebracions familiars o retirs corporatius.',
+  });
   return (
     <div className="bg-[#F5F2EA] min-h-screen py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-6 md:px-12">

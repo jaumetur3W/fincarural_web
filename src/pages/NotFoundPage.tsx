@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, ArrowLeft } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const NotFoundPage: React.FC = () => {
+  usePageMeta({
+    title: 'Pàgina no trobada (404)',
+    description: 'Aquest espai no existeix o ha canviat d’adreça.',
+  });
   return (
     <div className="bg-[#F5F2EA] min-h-[70vh] flex items-center justify-center py-20 px-6 text-center">
       <div className="max-w-md mx-auto space-y-6">

@@ -3,8 +3,13 @@ import { Link } from 'react-router-dom';
 import { ACCOMMODATIONS } from '../data/content';
 import { ImageLightboxModal, type GalleryImage } from '../components/ImageLightboxModal';
 import { ArrowUpRight, Check, BedDouble, Users, ShieldAlert, Maximize2 } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const StaysPage: React.FC = () => {
+  usePageMeta({
+    title: 'Estades Privades & Allotjament',
+    description: 'Lloguer exclusiu de la masia amb 7 suites completes, cuina comunitària de pedra i bassa d’aigua salina.',
+  });
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<GalleryImage[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -64,39 +69,45 @@ export const StaysPage: React.FC = () => {
             >
               {/* Image Collage / Main Visual */}
               <div className="lg:col-span-6 space-y-4">
-                <div
-                  className="relative h-80 overflow-hidden cursor-pointer group"
+                <button
+                  type="button"
+                  className="relative h-80 w-full overflow-hidden cursor-pointer group block p-0 border-0 bg-transparent text-left focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
                   onClick={() => openOptionGallery(option.images, option.title)}
+                  aria-label={`Veure fotos de ${option.title}`}
                 >
                   <img
                     src={option.images[0]}
                     alt={option.title}
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
+                    loading="lazy"
                   />
                   <div className="absolute top-3 left-3 bg-[#343D2D] text-[#FBF9F4] text-[10px] uppercase tracking-widest px-2.5 py-1">
                     {option.capacity}
                   </div>
                   <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-xs flex items-center gap-1.5 backdrop-blur-xs">
-                    <Maximize2 className="w-3.5 h-3.5" />
+                    <Maximize2 className="w-3.5 h-3.5" aria-hidden="true" />
                     <span>Veure {option.images.length} fotos</span>
                   </div>
-                </div>
+                </button>
 
                 {/* Sub thumbs if multiple */}
                 {option.images.length > 1 && (
                   <div className="grid grid-cols-2 gap-3">
                     {option.images.slice(1).map((subImg, sIdx) => (
-                      <div
+                      <button
+                        type="button"
                         key={sIdx}
-                        className="h-28 overflow-hidden cursor-pointer"
+                        className="h-28 overflow-hidden cursor-pointer p-0 border-0 bg-transparent block focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
                         onClick={() => openOptionGallery(option.images, option.title)}
+                        aria-label={`Foto ${sIdx + 2} de ${option.title}`}
                       >
                         <img
                           src={subImg}
                           alt={`${option.title} detall`}
                           className="w-full h-full object-cover hover:opacity-90 transition-opacity"
+                          loading="lazy"
                         />
-                      </div>
+                      </button>
                     ))}
                   </div>
                 )}

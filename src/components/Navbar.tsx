@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { FINCA_INFO } from '../data/content';
@@ -7,7 +7,6 @@ export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const prevPathRef = useRef(location.pathname);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,13 +16,9 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu if route changes
-  if (prevPathRef.current !== location.pathname) {
-    prevPathRef.current = location.pathname;
-    if (isOpen) {
-      setIsOpen(false);
-    }
-  }
+  const closeMenu = () => {
+    if (isOpen) setIsOpen(false);
+  };
 
   const navLinks = [
     { name: 'La Finca', path: '/la-finca' },
@@ -135,6 +130,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
+                  onClick={closeMenu}
                   aria-current={location.pathname === link.path ? 'page' : undefined}
                   className={`text-base font-serif tracking-wide py-2 border-b border-[#DDD4C5]/30 ${
                     location.pathname === link.path
@@ -148,6 +144,7 @@ export const Navbar: React.FC = () => {
               <div className="pt-2">
                 <Link
                   to="/sollicitud"
+                  onClick={closeMenu}
                   className="w-full inline-flex justify-center items-center gap-2 py-3 text-xs uppercase tracking-widest font-semibold text-[#FBF9F4] bg-[#343D2D]"
                 >
                   <span>Sol·licitar disponibilitat i pressupost</span>

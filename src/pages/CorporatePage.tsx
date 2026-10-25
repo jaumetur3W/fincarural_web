@@ -2,8 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CORPORATE_PROGRAMS } from '../data/content';
 import { ArrowUpRight, Check, Briefcase, Wifi, Monitor, Coffee, Info } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const CorporatePage: React.FC = () => {
+  usePageMeta({
+    title: 'Encuentres de Empresa & Retirs',
+    description: 'Espai inspirador per a comitès estratègics, tallers d’innovació i retirs d’equip en un paratge protegit.',
+  });
   return (
     <div className="bg-[#F5F2EA] min-h-screen py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-6 md:px-12">

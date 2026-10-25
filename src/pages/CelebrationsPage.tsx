@@ -2,8 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CELEBRATIONS } from '../data/content';
 import { ArrowUpRight, Heart, Check, Info } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const CelebrationsPage: React.FC = () => {
+  usePageMeta({
+    title: 'Celebracions Íntimes & Enllaços',
+    description: 'Trobades familiars pausades, celebracions i enllaços en petit comitè fins a 60 convidats a Mas de l’Alzina.',
+  });
   return (
     <div className="bg-[#F5F2EA] min-h-screen py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-6 md:px-12">

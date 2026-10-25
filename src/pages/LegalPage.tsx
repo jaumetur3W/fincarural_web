@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Info, FileText, ArrowLeft } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const LegalPage: React.FC = () => {
+  usePageMeta({
+    title: 'Condicions de la Demo & Privacitat',
+    description: 'Avís sobre la naturalesa conceptual de portfolio del projecte Mas de l’Alzina i tractament de dades en frontend.',
+  });
   return (
     <div className="bg-[#F5F2EA] min-h-screen py-12 md:py-20">
       <div className="max-w-3xl mx-auto px-6 md:px-12">

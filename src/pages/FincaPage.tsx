@@ -3,8 +3,13 @@ import { Link } from 'react-router-dom';
 import { SPACES } from '../data/content';
 import { ImageLightboxModal, type GalleryImage } from '../components/ImageLightboxModal';
 import { ArrowUpRight, Maximize2, Shield, Sparkles, Feather } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const FincaPage: React.FC = () => {
+  usePageMeta({
+    title: 'La Finca & el Terreny',
+    description: 'Arquitectura rural restaurada amb calç aèria, pedra de Buixcarró i fustes sostenibles a la Vall d’Albaida.',
+  });
   const [activeTab, setActiveTab] = useState<'tots' | 'interior' | 'exterior' | 'comu'>('tots');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
@@ -110,24 +115,27 @@ export const FincaPage: React.FC = () => {
               className="bg-[#FBF9F4] border border-[#DDD4C5] overflow-hidden flex flex-col justify-between"
             >
               <div>
-                <div
-                  className="relative h-72 cursor-pointer overflow-hidden group"
+                <button
+                  type="button"
+                  className="relative h-72 w-full text-left cursor-pointer overflow-hidden group block focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
                   onClick={() => openLightbox(SPACES.findIndex((s) => s.id === space.id))}
+                  aria-label={`Ampliar fotografia de ${space.name}`}
                 >
                   <img
                     src={space.imageUrl}
                     alt={space.name}
                     className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/70 text-white text-xs uppercase tracking-wider backdrop-blur-xs">
-                      <Maximize2 className="w-3.5 h-3.5" /> Ampliar fotografia
+                      <Maximize2 className="w-3.5 h-3.5" aria-hidden="true" /> Ampliar fotografia
                     </span>
                   </div>
                   <div className="absolute top-3 left-3 bg-[#FBF9F4]/90 px-2.5 py-1 text-[10px] uppercase tracking-wider font-semibold text-[#343D2D]">
                     {space.surface}
                   </div>
-                </div>
+                </button>
 
                 <div className="p-6 md:p-8 space-y-4">
                   <div className="flex items-center justify-between text-xs text-[#B56F50] uppercase tracking-wider font-medium">

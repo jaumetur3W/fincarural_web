@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FAQS } from '../data/content';
 import { ChevronDown, ChevronUp, ArrowUpRight } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const FaqPage: React.FC = () => {
+  usePageMeta({
+    title: 'Preguntes Freqüents & Informació Pràctica',
+    description: 'Resolució de dubtes sobre arribada, reserves, serveis de càtering i sostenibilitat a Mas de l’Alzina.',
+  });
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface GalleryImage {
@@ -22,13 +22,16 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
-  // Sync index if initial changes
-  React.useEffect(() => {
-    setCurrentIndex(initialIndex);
-  }, [initialIndex]);
+  const nextImage = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
 
-  // Handle keyboard navigation
-  React.useEffect(() => {
+  const prevImage = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  // Handle keyboard navigation & accessibility trap
+  useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -37,19 +40,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentIndex, images.length]);
+  }, [isOpen, nextImage, prevImage, onClose]);
 
   if (!isOpen || images.length === 0) return null;
 
   const current = images[currentIndex] || images[0];
-
-  const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
 
   return (
     <div
@@ -60,32 +55,35 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
     >
       {/* Close button */}
       <button
+        type="button"
         onClick={onClose}
         className="absolute top-6 right-6 p-3 text-[#ECE6DC] hover:text-[#B56F50] rounded-full bg-black/40 hover:bg-black/60 transition-colors z-50 focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
         aria-label="Tancar visualitzador"
       >
-        <X className="w-6 h-6" />
+        <X className="w-6 h-6" aria-hidden="true" />
       </button>
 
       {/* Prev button */}
       {images.length > 1 && (
         <button
+          type="button"
           onClick={prevImage}
-          className="absolute left-4 md:left-8 p-3 text-[#ECE6DC] hover:text-[#B56F50] rounded-full bg-black/40 hover:bg-black/60 transition-colors z-50 focus:outline-none"
+          className="absolute left-4 md:left-8 p-3 text-[#ECE6DC] hover:text-[#B56F50] rounded-full bg-black/40 hover:bg-black/60 transition-colors z-50 focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
           aria-label="Imatge anterior"
         >
-          <ChevronLeft className="w-8 h-8" />
+          <ChevronLeft className="w-8 h-8" aria-hidden="true" />
         </button>
       )}
 
       {/* Next button */}
       {images.length > 1 && (
         <button
+          type="button"
           onClick={nextImage}
-          className="absolute right-4 md:right-8 p-3 text-[#ECE6DC] hover:text-[#B56F50] rounded-full bg-black/40 hover:bg-black/60 transition-colors z-50 focus:outline-none"
+          className="absolute right-4 md:right-8 p-3 text-[#ECE6DC] hover:text-[#B56F50] rounded-full bg-black/40 hover:bg-black/60 transition-colors z-50 focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
           aria-label="Imatge següent"
         >
-          <ChevronRight className="w-8 h-8" />
+          <ChevronRight className="w-8 h-8" aria-hidden="true" />
         </button>
       )}
 

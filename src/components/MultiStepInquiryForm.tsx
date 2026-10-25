@@ -52,13 +52,17 @@ const initialFormData: InquiryFormData = {
   privacyAccepted: false,
 };
 
+const getTodayIso = () => new Date().toISOString().split('T')[0];
+
 export const MultiStepInquiryForm: React.FC = () => {
+  const [todayStr] = useState<string>(getTodayIso);
   const [step, setStep] = useState<number>(1);
   const [data, setData] = useState<InquiryFormData>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [simulationMode, setSimulationMode] = useState<'success' | 'simulated-error'>('success');
+  const [demoReferenceId, setDemoReferenceId] = useState<string>('MDA-8492');
 
   const updateField = (field: keyof InquiryFormData, value: any) => {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -146,6 +150,8 @@ export const MultiStepInquiryForm: React.FC = () => {
       if (simulationMode === 'simulated-error') {
         setErrors({ submit: 'Simulació d’error de connexió en xarxa de prova. Pots provar de nou en mode èxit.' });
       } else {
+        const randNum = Math.floor(1000 + Math.random() * 9000);
+        setDemoReferenceId(`MDA-${randNum}`);
         setIsSubmitted(true);
         confetti({
           particleCount: 50,
@@ -182,15 +188,22 @@ export const MultiStepInquiryForm: React.FC = () => {
       {!isSubmitted ? (
         <div>
           {/* Progress Indicator */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-[#51483D]/70 mb-3">
+          <div className="mb-10" aria-label={`Pas ${step} de 5`}>
+            <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-[#51483D]/70 mb-3" aria-hidden="true">
               <span className={step >= 1 ? 'text-[#343D2D] font-bold' : ''}>1. Tipus</span>
               <span className={step >= 2 ? 'text-[#343D2D] font-bold' : ''}>2. Dates</span>
               <span className={step >= 3 ? 'text-[#343D2D] font-bold' : ''}>3. Detalls</span>
               <span className={step >= 4 ? 'text-[#343D2D] font-bold' : ''}>4. Contacte</span>
               <span className={step >= 5 ? 'text-[#343D2D] font-bold' : ''}>5. Resum</span>
             </div>
-            <div className="w-full bg-[#DDD4C5]/60 h-1.5 rounded-full overflow-hidden">
+            <div
+              role="progressbar"
+              aria-valuenow={step}
+              aria-valuemin={1}
+              aria-valuemax={5}
+              aria-label={`Progrés del formulari: pas ${step} de 5`}
+              className="w-full bg-[#DDD4C5]/60 h-1.5 rounded-full overflow-hidden"
+            >
               <div
                 className="bg-[#343D2D] h-full transition-all duration-300 ease-out"
                 style={{ width: `${(step / 5) * 100}%` }}
@@ -296,6 +309,7 @@ export const MultiStepInquiryForm: React.FC = () => {
                     <div className="relative">
                       <input
                         type="date"
+                        min={todayStr}
                         value={data.startDate}
                         onChange={(e) => updateField('startDate', e.target.value)}
                         className="w-full bg-[#F5F2EA] border border-[#DDD4C5] p-3 text-sm text-[#343D2D] focus:border-[#343D2D] focus:outline-none"
@@ -315,6 +329,7 @@ export const MultiStepInquiryForm: React.FC = () => {
                       </label>
                       <input
                         type="date"
+                        min={data.startDate || todayStr}
                         value={data.endDate}
                         onChange={(e) => updateField('endDate', e.target.value)}
                         className="w-full bg-[#F5F2EA] border border-[#DDD4C5] p-3 text-sm text-[#343D2D] focus:border-[#343D2D] focus:outline-none"
@@ -643,39 +658,84 @@ export const MultiStepInquiryForm: React.FC = () => {
                 <div className="bg-[#F5F2EA] border border-[#DDD4C5] p-6 space-y-4 text-xs text-[#51483D]">
                   <div className="flex justify-between items-center border-b border-[#DDD4C5]/60 pb-3">
                     <span className="uppercase tracking-wider font-semibold text-[#343D2D]">Tipologia</span>
-                    <span className="capitalize font-medium text-sm text-[#343D2D]">
-                      {data.type === 'estada' && 'Estada Privada'}
-                      {data.type === 'celebracio' && 'Celebració Íntima'}
-                      {data.type === 'empresa' && 'Trobada d’Empresa'}
-                      {data.type === 'altres' && 'Altres Consultes'}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="capitalize font-medium text-sm text-[#343D2D]">
+                        {data.type === 'estada' && 'Estada Privada'}
+                        {data.type === 'celebracio' && 'Celebració Íntima'}
+                        {data.type === 'empresa' && 'Trobada d’Empresa'}
+                        {data.type === 'altres' && 'Altres Consultes'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="text-[11px] uppercase tracking-wider text-[#B56F50] hover:underline cursor-pointer"
+                      >
+                        Canviar
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex justify-between items-center border-b border-[#DDD4C5]/60 pb-3">
                     <span className="uppercase tracking-wider font-semibold text-[#343D2D]">Dates</span>
-                    <span className="font-medium text-[#343D2D]">
-                      {data.startDate} {data.endDate ? `fins a ${data.endDate}` : ''}{' '}
-                      {data.datesFlexible ? '(Amb flexibilitat)' : '(Dates fixes)'}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium text-[#343D2D]">
+                        {data.startDate} {data.endDate ? `fins a ${data.endDate}` : ''}{' '}
+                        {data.datesFlexible ? '(Amb flexibilitat)' : '(Dates fixes)'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        className="text-[11px] uppercase tracking-wider text-[#B56F50] hover:underline cursor-pointer"
+                      >
+                        Canviar
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex justify-between items-center border-b border-[#DDD4C5]/60 pb-3">
                     <span className="uppercase tracking-wider font-semibold text-[#343D2D]">Assistents</span>
-                    <span className="font-medium text-[#343D2D]">{data.guestsCount} persones</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium text-[#343D2D]">{data.guestsCount} persones</span>
+                      <button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        className="text-[11px] uppercase tracking-wider text-[#B56F50] hover:underline cursor-pointer"
+                      >
+                        Canviar
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex justify-between items-center border-b border-[#DDD4C5]/60 pb-3">
                     <span className="uppercase tracking-wider font-semibold text-[#343D2D]">Contacte</span>
-                    <span className="font-medium text-[#343D2D]">
-                      {data.fullName} ({data.email})
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium text-[#343D2D]">
+                        {data.fullName} ({data.email})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setStep(4)}
+                        className="text-[11px] uppercase tracking-wider text-[#B56F50] hover:underline cursor-pointer"
+                      >
+                        Canviar
+                      </button>
+                    </div>
                   </div>
 
                   {data.specialRequests && (
                     <div className="pt-1">
-                      <span className="uppercase tracking-wider font-semibold text-[#343D2D] block mb-1">
-                        Comentaris
-                      </span>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="uppercase tracking-wider font-semibold text-[#343D2D] block">
+                          Comentaris
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setStep(3)}
+                          className="text-[11px] uppercase tracking-wider text-[#B56F50] hover:underline cursor-pointer"
+                        >
+                          Canviar
+                        </button>
+                      </div>
                       <p className="italic text-[#51483D]/80 bg-[#FBF9F4] p-3 border border-[#DDD4C5]/50">
                         "{data.specialRequests}"
                       </p>
@@ -750,7 +810,7 @@ export const MultiStepInquiryForm: React.FC = () => {
               Sol·licitud de prova rebuda
             </h3>
             <p className="text-xs uppercase tracking-widest text-[#B56F50] font-sans font-semibold">
-              Referència conceptual: #MDA-{(Math.random() * 10000).toFixed(0)}
+              Referència conceptual: #{demoReferenceId}
             </p>
             <p className="text-sm text-[#51483D] leading-relaxed pt-2 font-light">
               Gràcies, <strong className="font-medium text-[#343D2D]">{data.fullName}</strong>.

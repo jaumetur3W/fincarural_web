@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { FINCA_INFO } from '../data/content';
 import { ArrowUpRight, Compass, Mail, Clock, ShieldCheck } from 'lucide-react';
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-[#343D2D] text-[#ECE6DC] pt-16 pb-12 border-t border-[#343D2D]/80">
@@ -121,7 +123,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#B56F50]" />
             <span>
-              © {new Date().getFullYear()} Mas de l'Alzina. {FINCA_INFO.noticeDisclaimer}
+              © {CURRENT_YEAR} Mas de l'Alzina. {FINCA_INFO.noticeDisclaimer}
             </span>
           </div>
 

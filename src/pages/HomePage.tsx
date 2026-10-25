@@ -3,8 +3,13 @@ import { Link } from 'react-router-dom';
 import { SPACES } from '../data/content';
 import { ImageLightboxModal, type GalleryImage } from '../components/ImageLightboxModal';
 import { ArrowUpRight, ArrowRight, MapPin, Eye } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const HomePage: React.FC = () => {
+  usePageMeta({
+    title: 'Estades privades, celebracions i trobades',
+    description: 'Finca mediterrània a l’interior de València rehabilitada per a estades exclusives, celebracions íntimes i retirs de reflexió.',
+  });
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -122,12 +127,19 @@ export const HomePage: React.FC = () => {
           {/* Asymmetric composition of images */}
           <div className="lg:col-span-7 grid grid-cols-12 gap-4">
             <div className="col-span-8 overflow-hidden rounded-xs shadow-md">
-              <img
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
-                alt="Interiors de pedra i arcs restaurats"
-                className="w-full h-[380px] md:h-[460px] object-cover hover:scale-102 transition-transform duration-700 cursor-pointer"
+              <button
+                type="button"
+                className="w-full h-full p-0 border-0 bg-transparent cursor-pointer block focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
                 onClick={() => openLightbox(1)}
-              />
+                aria-label="Ampliar imatge d'interiors de pedra i arcs restaurats"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+                  alt="Interiors de pedra i arcs restaurats"
+                  className="w-full h-[380px] md:h-[460px] object-cover hover:scale-102 transition-transform duration-700"
+                  loading="lazy"
+                />
+              </button>
             </div>
             <div className="col-span-4 flex flex-col justify-end space-y-4">
               <div className="bg-[#FBF9F4] p-5 border border-[#DDD4C5] shadow-xs">
@@ -135,12 +147,19 @@ export const HomePage: React.FC = () => {
                 <p className="text-xs text-[#51483D]/80 mt-1 font-light">D'oliveres i bosc protegit</p>
               </div>
               <div className="overflow-hidden rounded-xs shadow-xs">
-                <img
-                  src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80"
-                  alt="Detall de mobiliari i fusta noble"
-                  className="w-full h-[220px] object-cover hover:scale-105 transition-transform duration-500 cursor-pointer"
+                <button
+                  type="button"
+                  className="w-full h-full p-0 border-0 bg-transparent cursor-pointer block focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
                   onClick={() => openLightbox(3)}
-                />
+                  aria-label="Ampliar imatge de detall de mobiliari i fusta noble"
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80"
+                    alt="Detall de mobiliari i fusta noble"
+                    className="w-full h-[220px] object-cover hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </button>
               </div>
             </div>
           </div>
@@ -282,16 +301,22 @@ export const HomePage: React.FC = () => {
               className="bg-[#FBF9F4] border border-[#DDD4C5] p-5 flex flex-col justify-between"
             >
               <div>
-                <div className="relative overflow-hidden h-52 -mx-5 -mt-5 mb-4 group cursor-pointer" onClick={() => openLightbox(idx)}>
+                <button
+                  type="button"
+                  className="relative overflow-hidden h-52 -mx-5 -mt-5 mb-4 group cursor-pointer w-[calc(100%+2.5rem)] block p-0 border-0 bg-transparent text-left focus:outline-none focus:ring-2 focus:ring-[#B56F50]"
+                  onClick={() => openLightbox(idx)}
+                  aria-label={`Ampliar imatge de l'espai ${space.name}`}
+                >
                   <img
                     src={space.imageUrl}
                     alt={space.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
                   />
                   <div className="absolute top-3 right-3 bg-black/60 text-white p-1.5 rounded-xs backdrop-blur-xs">
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-4 h-4" aria-hidden="true" />
                   </div>
-                </div>
+                </button>
 
                 <div className="flex items-center justify-between text-[11px] text-[#B56F50] font-medium uppercase tracking-wider mb-1">
                   <span>{space.category}</span>
