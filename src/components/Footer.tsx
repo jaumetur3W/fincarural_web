@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
               Contacte de Demo
             </h3>
             <p className="text-xs text-[#ECE6DC]/70 leading-relaxed font-light">
-              Pots sol·licitar informació mitjançant el formulari interactiu en qualsevol moment.
+              Pots provar el formulari interactiu en qualsevol moment; no s'envien sol·licituds reals.
             </p>
             <div className="space-y-2 pt-1 text-xs text-[#ECE6DC]/85">
               <div className="flex items-center gap-2">
