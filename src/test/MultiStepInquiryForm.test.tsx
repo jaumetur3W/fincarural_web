@@ -45,6 +45,21 @@ describe('MultiStepInquiryForm', () => {
     expect(screen.getByText("Quin tipus d'experiència estàs planejant?")).toBeInTheDocument();
   });
 
+  it('applies the correct guest limit for stays and events', () => {
+    renderForm();
+    const nextBtn = screen.getByRole('button', { name: /següent pas/i });
+    fireEvent.click(nextBtn);
+
+    const guestSlider = screen.getByRole('slider');
+    expect(guestSlider).toHaveAttribute('max', '16');
+
+    fireEvent.click(screen.getByRole('button', { name: /anterior/i }));
+    fireEvent.click(screen.getByText('Celebració Íntima'));
+    fireEvent.click(nextBtn);
+
+    expect(screen.getByRole('slider')).toHaveAttribute('max', '65');
+  });
+
   it('supports selecting different inquiry types', () => {
     renderForm();
     const celebrationOption = screen.getByText('Celebració Íntima');

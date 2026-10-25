@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://masdelalzina-demo.test/sitemap.xml
-
+Sitemap: https://jaumetur3w.github.io/fincarural_web/sitemap.xml

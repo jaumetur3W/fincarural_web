@@ -1,6 +1,5 @@
 import React from 'react';
 import { MultiStepInquiryForm } from '../components/MultiStepInquiryForm';
-import { FINCA_INFO } from '../data/content';
 import { Mail, Clock, ShieldCheck } from 'lucide-react';
 import { usePageMeta } from '../hooks/usePageMeta';
 
@@ -21,7 +20,7 @@ export const InquiryPage: React.FC = () => {
             Sol·licitar Disponibilitat.
           </h1>
           <p className="text-sm md:text-base text-[#51483D] leading-relaxed font-light mt-4">
-            Emplena el formulari interactiu en 5 senzills passos. Revisarem la idoneïtat de les teves dates i rebràs una proposta detallada amb disponibilitat i pressupost orientatiu.
+            Prova el formulari interactiu en 5 passos i explora com seria una sol·licitud real. Aquesta demo no envia correus ni dades a cap servidor, i no genera reserves ni pressupostos reals.
           </p>
         </div>
 
@@ -35,24 +34,24 @@ export const InquiryPage: React.FC = () => {
           <div className="flex items-start gap-3">
             <Mail className="w-5 h-5 text-[#B56F50] shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs uppercase tracking-wider font-semibold text-[#343D2D]">Correu de consulta</p>
-              <p className="text-xs text-[#51483D]/80 font-light mt-0.5">{FINCA_INFO.demoContact.email}</p>
+              <p className="text-xs uppercase tracking-wider font-semibold text-[#343D2D]">Enviament de correu</p>
+              <p className="text-xs text-[#51483D]/80 font-light mt-0.5">Desactivat en aquesta demo</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
             <Clock className="w-5 h-5 text-[#B56F50] shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs uppercase tracking-wider font-semibold text-[#343D2D]">Temps de resposta</p>
-              <p className="text-xs text-[#51483D]/80 font-light mt-0.5">Menys de 24 hores laborables</p>
+              <p className="text-xs uppercase tracking-wider font-semibold text-[#343D2D]">Resposta real</p>
+              <p className="text-xs text-[#51483D]/80 font-light mt-0.5">No hi ha contacte posterior</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-[#B56F50] shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs uppercase tracking-wider font-semibold text-[#343D2D]">Sense compromís</p>
-              <p className="text-xs text-[#51483D]/80 font-light mt-0.5">La sol·licitud no genera cobraments</p>
+              <p className="text-xs uppercase tracking-wider font-semibold text-[#343D2D]">Privacitat de prova</p>
+              <p className="text-xs text-[#51483D]/80 font-light mt-0.5">Les dades no s'envien a cap servidor</p>
             </div>
           </div>
         </div>

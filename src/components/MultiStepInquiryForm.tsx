@@ -18,6 +18,7 @@ export interface InquiryFormData {
   // Step 2
   startDate: string;
   endDate: string;
+  eventTime: string;
   guestsCount: number;
   datesFlexible: boolean;
   // Step 3
@@ -38,6 +39,7 @@ const initialFormData: InquiryFormData = {
   type: 'estada',
   startDate: '',
   endDate: '',
+  eventTime: 'migdia',
   guestsCount: 10,
   datesFlexible: true,
   stayOption: 'integre',
@@ -52,7 +54,14 @@ const initialFormData: InquiryFormData = {
   privacyAccepted: false,
 };
 
-const getTodayIso = () => new Date().toISOString().split('T')[0];
+const getTodayIso = () => {
+  // Build the date in local time; toISOString() uses UTC and can be a day behind near midnight.
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export const MultiStepInquiryForm: React.FC = () => {
   const [todayStr] = useState<string>(getTodayIso);
@@ -64,8 +73,14 @@ export const MultiStepInquiryForm: React.FC = () => {
   const [simulationMode, setSimulationMode] = useState<'success' | 'simulated-error'>('success');
   const [demoReferenceId, setDemoReferenceId] = useState<string>('MDA-8492');
 
-  const updateField = (field: keyof InquiryFormData, value: any) => {
-    setData((prev) => ({ ...prev, [field]: value }));
+  const updateField = (field: keyof InquiryFormData, value: unknown) => {
+    setData((prev) => {
+      const next = { ...prev, [field]: value } as InquiryFormData;
+      if (field === 'type' && value === 'estada' && next.guestsCount > 16) {
+        next.guestsCount = 16;
+      }
+      return next;
+    });
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -86,10 +101,8 @@ export const MultiStepInquiryForm: React.FC = () => {
       if (!data.startDate) {
         errs.startDate = 'Indica la data d’arribada o esdeveniment.';
       } else {
-        const selected = new Date(data.startDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        if (selected < today) {
+        // ISO date strings (YYYY-MM-DD) compare chronologically without timezone conversion.
+        if (data.startDate < todayStr) {
           errs.startDate = 'La data no pot ser en el passat.';
         }
       }
@@ -97,15 +110,18 @@ export const MultiStepInquiryForm: React.FC = () => {
       if (data.type === 'estada') {
         if (!data.endDate) {
           errs.endDate = 'Indica la data de sortida estimada.';
-        } else if (data.startDate && new Date(data.endDate) <= new Date(data.startDate)) {
+        } else if (data.startDate && data.endDate <= data.startDate) {
           errs.endDate = 'La sortida ha de ser posterior a l’arribada.';
         }
       }
 
-      if (!data.guestsCount || data.guestsCount < 1) {
-        errs.guestsCount = 'Indica com a mínim 1 persona.';
-      } else if (data.guestsCount > 80) {
-        errs.guestsCount = 'La capacitat màxima de la finca és de 65 persones per esdeveniment.';
+      const maxGuests = data.type === 'estada' ? 16 : 65;
+      if (!data.guestsCount || data.guestsCount < 2) {
+        errs.guestsCount = 'Indica com a mínim 2 persones.';
+      } else if (data.guestsCount > maxGuests) {
+        errs.guestsCount = data.type === 'estada'
+          ? 'La capacitat màxima d’una estada és de 16 hostes en aquesta demo.'
+          : 'La capacitat màxima de l’esdeveniment és de 65 persones en aquesta demo.';
       }
     }
 
@@ -303,11 +319,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                    <label htmlFor="startDate" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                       {data.type === 'estada' ? 'Data d’arribada estimada' : 'Data de la celebració'} *
                     </label>
                     <div className="relative">
                       <input
+                        id="startDate"
                         type="date"
                         min={todayStr}
                         value={data.startDate}
@@ -324,10 +341,11 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                   {data.type === 'estada' ? (
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                      <label htmlFor="endDate" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                         Data de sortida estimada *
                       </label>
                       <input
+                        id="endDate"
                         type="date"
                         min={data.startDate || todayStr}
                         value={data.endDate}
@@ -342,15 +360,17 @@ export const MultiStepInquiryForm: React.FC = () => {
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                      <label htmlFor="eventTime" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                         Horari aproximat
                       </label>
                       <select
+                        id="eventTime"
                         className="w-full bg-[#F5F2EA] border border-[#DDD4C5] p-3 text-sm text-[#343D2D] focus:border-[#343D2D] focus:outline-none"
-                        defaultValue="migdia"
+                        value={data.eventTime}
+                        onChange={(e) => updateField('eventTime', e.target.value)}
                       >
-                        <option value="migdia">Migdia i vesprada (11:00h - 19:30h)</option>
-                        <option value="nit">Tardor / Nit (18:00h - 01:00h)</option>
+                        <option value="migdia">Migdia i vesprada (11:00–19:30)</option>
+                        <option value="nit">Vesprada i nit (18:00–01:00)</option>
                         <option value="dia_sencer">Jornada completa de matí a nit</option>
                       </select>
                     </div>
@@ -358,22 +378,22 @@ export const MultiStepInquiryForm: React.FC = () => {
                 </div>
 
                 <div className="pt-2">
-                  <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                  <label htmlFor="guestsCount" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                     Nombre aproximat d’assistents o hostes: <span className="font-bold text-[#B56F50]">{data.guestsCount}</span>
                   </label>
                   <input
+                    id="guestsCount"
                     type="range"
                     min="2"
-                    max="65"
+                    max={data.type === 'estada' ? 16 : 65}
                     value={data.guestsCount}
                     onChange={(e) => updateField('guestsCount', parseInt(e.target.value))}
                     className="w-full accent-[#343D2D] cursor-pointer"
                   />
                   <div className="flex justify-between text-[11px] text-[#51483D]/60 mt-1">
                     <span>2 (Íntim)</span>
-                    <span>16 (Capacitat màx. pernocta)</span>
-                    <span>45</span>
-                    <span>65 (Límit esdeveniment exterior)</span>
+                    <span>{data.type === 'estada' ? '16 (màxim hostes)' : '16'}</span>
+                    {data.type !== 'estada' && <><span>45</span><span>65 (màxim demo)</span></>}
                   </div>
                   {errors.guestsCount && (
                     <p className="text-xs text-[#B56F50] mt-1 flex items-center gap-1">
@@ -480,10 +500,11 @@ export const MultiStepInquiryForm: React.FC = () => {
                 )}
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                  <label htmlFor="cateringNeeded" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                     Previsió gastronòmica
                   </label>
                   <select
+                    id="cateringNeeded"
                     value={data.cateringNeeded}
                     onChange={(e) => updateField('cateringNeeded', e.target.value)}
                     className="w-full bg-[#F5F2EA] border border-[#DDD4C5] p-3 text-sm text-[#343D2D]"
@@ -495,10 +516,11 @@ export const MultiStepInquiryForm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
+                  <label htmlFor="specialRequests" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1.5">
                     Observacions o requisits particulars
                   </label>
                   <textarea
+                    id="specialRequests"
                     rows={3}
                     value={data.specialRequests}
                     onChange={(e) => updateField('specialRequests', e.target.value)}
@@ -517,16 +539,18 @@ export const MultiStepInquiryForm: React.FC = () => {
                     On podem contactar amb tu?
                   </h3>
                   <p className="text-sm text-[#51483D]/80 mt-1 font-light">
-                    Enviarem la proposta orientativa i la confirmació de disponibilitat directament per email.
+                    Aquesta demo no envia cap correu ni comprova la disponibilitat real.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                    <label htmlFor="fullName" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                       Nom complet *
                     </label>
                     <input
+                      id="fullName"
+                      autoComplete="name"
                       type="text"
                       value={data.fullName}
                       onChange={(e) => updateField('fullName', e.target.value)}
@@ -541,10 +565,12 @@ export const MultiStepInquiryForm: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                    <label htmlFor="email" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                       Correu electrònic *
                     </label>
                     <input
+                      id="email"
+                      autoComplete="email"
                       type="email"
                       value={data.email}
                       onChange={(e) => updateField('email', e.target.value)}
@@ -561,10 +587,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                    <label htmlFor="phone" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                       Telèfon de contacte (opcional)
                     </label>
                     <input
+                      id="phone"
+                      autoComplete="tel"
                       type="tel"
                       value={data.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
@@ -575,10 +603,12 @@ export const MultiStepInquiryForm: React.FC = () => {
 
                   {data.type === 'empresa' && (
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
+                      <label htmlFor="companyName" className="block text-xs uppercase tracking-wider text-[#343D2D] font-semibold mb-1">
                         Empresa o Organització
                       </label>
                       <input
+                        id="companyName"
+                        autoComplete="organization"
                         type="text"
                         value={data.companyName}
                         onChange={(e) => updateField('companyName', e.target.value)}
@@ -680,6 +710,7 @@ export const MultiStepInquiryForm: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <span className="font-medium text-[#343D2D]">
                         {data.startDate} {data.endDate ? `fins a ${data.endDate}` : ''}{' '}
+                        {data.type !== 'estada' ? `· ${data.eventTime === 'migdia' ? 'Migdia i vesprada' : data.eventTime === 'nit' ? 'Vesprada i nit' : 'Jornada completa'} · ` : ''}
                         {data.datesFlexible ? '(Amb flexibilitat)' : '(Dates fixes)'}
                       </span>
                       <button
@@ -815,9 +846,8 @@ export const MultiStepInquiryForm: React.FC = () => {
             <p className="text-sm text-[#51483D] leading-relaxed pt-2 font-light">
               Gràcies, <strong className="font-medium text-[#343D2D]">{data.fullName}</strong>.
               Aquesta és una simulació interactiva d’alta fidelitat. En una implementació de producció,
-              el nostre equip rebria la teva petició per a{' '}
-              <strong className="text-[#343D2D]">{data.guestsCount} persones</strong> i enviaria la disponibilitat
-              en menys de 24 hores a <span className="underline">{data.email}</span>.
+              una versió connectada a un backend podria gestionar una petició per a{' '}
+              <strong className="text-[#343D2D]">{data.guestsCount} persones</strong> i enviar una resposta a <span className="underline">{data.email}</span>.
             </p>
           </div>
 
